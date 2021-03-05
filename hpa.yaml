@@ -2,29 +2,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
-  labels:
-    app: angular-webapp
-  name: angular-webapp
+  name: php-apache
 spec:
-  replicas: 1
   selector:
     matchLabels:
-      app: angular-webapp
-  strategy: {}
+      run: php-apache
+  replicas: 1
   template:
     metadata:
-      creationTimestamp: null
       labels:
-        app: angular-webapp
+        run: php-apache
     spec:
       containers:
-      - image: docker.io/bbachin1/angular-node-webapp
-        name: webapp
-        imagePullPolicy: Always
-        resources: {}
+      - name: php-apache
+        image: vamsijakkula/php-hpa
         ports:
-        - containerPort: 3080
+        - containerPort: 80
         resources:
           limits:
             cpu: 500m
@@ -32,56 +25,18 @@ spec:
           requests:
             cpu: 200m
             memory: 0.5Gi
-status: {}
 
 ---
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: angular-webapp
+  name: php-apache
   labels:
-    run: angular-webapp
+    run: php-apache
 spec:
   ports:
-  - port: 3080
-    protocol: TCP
+  - port: 80
   selector:
-    app: angular-webapp
-  
----
-
-apiVersion: autoscaling/v1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: angular-webapp
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: angular-webapp
-  minReplicas: 1
-  maxReplicas: 5
-  targetCPUUtilizationPercentage: 5
----
-
-apiVersion: autoscaling/v2beta2 
-kind: HorizontalPodAutoscaler
-metadata:
-  name: php-memory-scale 
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1 
-    kind: Deployment 
-    name: angular-webapp 
-  minReplicas: 1 
-  maxReplicas: 10 
-  metrics: 
-  - type: Resource
-    resource:
-      name: memory 
-      target:
-        type: Utilization 
-        averageValue: 10Mi 
-
+    run: php-apache
 
