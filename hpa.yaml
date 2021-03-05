@@ -54,22 +54,3 @@ spec:
   maxReplicas: 5
   targetCPUUtilizationPercentage: 5
 
----
-apiVersion: autoscaling/v2beta2 
-kind: HorizontalPodAutoscaler
-metadata:
-  name: php-memory-scale 
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1 
-    kind: Deployment 
-    name: php-apache 
-  minReplicas: 1 
-  maxReplicas: 5
-  metrics: 
-  - type: Resource
-    resource:
-      name: memory 
-      target:
-        type: Utilization 
-        averageValue: 10Mi 
